@@ -1,0 +1,51 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    background-color: black;
+    color: white;
+    background: url(../static/bg.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+h1{
+    text-align: center;
+    margin-bottom: 10px;
+}
+p{
+    font-size: 4rem;
+    text-align: center;
+}
+    .models{
+        margin-top: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+
+    }
+    .vendor, .PurchaseOrder, .HistoricalPerformance{
+        max-height: 40vh;
+        width: 45vw;
+         border: 2px solid black;
+         color: rgb(0, 0, 0);
+         background-color: white;
+         border-radius: 20px;
+    }
+    .views,.urls{
+        margin-bottom: 20px;
+        height: 80vh;
+        width: 50vw;
+        overflow: scroll;
+        background-color: white;
+        color: black;
+         border-radius: 50px;
+
+    }
+    pre{
+        color: green;
+    }

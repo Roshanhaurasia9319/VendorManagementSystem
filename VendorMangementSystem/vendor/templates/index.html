@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor</title>
+    <link rel="stylesheet" href="../static/style.css">
+</head>
+
+
+
+<body>
+    <div class="main">
+        <div class="header">
+            <p>Vendor Management System</p>
+        </div>
+        <div class="models">
+            <!-- <a href= "http://127.0.0.1:8000/api/vendors/Vendor/"><p>"Vendor": "http://127.0.0.1:8000/api/vendors/Vendor/"</p></a>
+            <a href= "http://127.0.0.1:8000/api/vendors/PurchaseOrder/",><p>"PurchaseOrder:"http://127.0.0.1:8000/api/vendors/PurchaseOrder/",</p></a>
+            <a href= "http://127.0.0.1:8000/api/vendors/HistoricalPerformance/"><p>"HistoricalPerformance": "http://127.0.0.1:8000/api/vendors/HistoricalPerformance/"</p></a>
+        </div> -->
+            <div class="vendor">
+                <h1>Creating Vendor Models</h1>
+                <pre>
+                # Create your models here.
+                class Vendor(models.Model):
+                    name = models.CharField(max_length=50)
+                    contact_details = models.TextField()
+                    address = models.TimeField(auto_now=True)
+                    vendor_code = models.CharField(max_length=50)
+                    on_time_delivery_rate = models.FloatField(null=True)
+                    quality_rating_avg = models.FloatField(null=True)
+                    average_response_time = models.FloatField(null=True)
+                    fulfillment_rate = models.FloatField(null=True)
+                    
+                    def __str__(self):
+                        return self.name
+            </pre>
+            </div>
+            <div class="PurchaseOrder">
+                <h1>PurchaseOrder</h1>
+                <pre>
+                class PurchaseOrder(models.Model):
+                      po_number=models.CharField(max_length=50)
+                      vendor=models.ForeignKey("Vendor", on_delete=models.CASCADE)
+                      order_date=models.DateTimeField(auto_now=True)
+                      delivery_date=models.DateTimeField(auto_now=True)
+                      item=models.CharField(max_length=50)
+                      items = models.JSONField()
+                      quantity = models.IntegerField()
+                      status = models.CharField(max_length=100, 
+                        choices=(("Pending","Pending"),("Completed","Completed")))
+                      quality_rating = models.FloatField(null=True)
+                      issue_date = models.DateTimeField()
+                      acknowledgment_date = models.DateTimeField(null=True)
+                      def __str__(self):
+                      return self.vendor
+            </pre>
+            </div>
+            <div class="HistoricalPerformance">
+                <h1>HistoricalPerformance</h1>
+                <pre>
+                    class HistoricalPerformance(models.Model):
+                           vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
+                           date = models.DateTimeField(auto_now=True)
+                           on_time_delivery_rate = models.FloatField(null=True)
+                           quality_rating_avg = models.FloatField(null=True)
+                           average_response_time = models.FloatField(null=True)
+                           fulfillment_rate = models.FloatField(null=True)
+                           def __str__(self):
+                           return self.vendor
+                </pre>
+            </div>
+
+           <div class="endpoints">
+            <div class="views">
+                <h1>vendors/view.py</h1>
+                <pre>
+                    from django.shortcuts import render
+                    from rest_framework import viewsets
+                    from vendor.models import Vendor, PurchaseOrder, HistoricalPerformance
+                    from vendor.serializers import VendorSerializer, POSerializer, HPSerializer
+                    from rest_framework.decorators import action
+                    from rest_framework.response import Response
+    
+                    # Create your views here.
+    
+                    class VendorViewSet(viewsets.ModelViewSet):
+                           queryset=Vendor.objects.all()
+                           serializer_class=VendorSerializer
+                           @action(detail=True, methods=['get'])
+                           def purchase_order(self, request, pk=None):
+                               try:
+                                   vendor = self.get_object()
+                                   po=PurchaseOrder.objects.filter(vendor=vendor)
+                                   po_serializer = POSerializer(po, many=True, context={'request':request})
+                                   return Response(po_serializer.data)
+                               except Exception as e:
+                                   print(e)
+                                   return Response({
+                                       'message':"Data may not be exist !! Error"
+                                   })
+    
+    
+                    class POViewSet(viewsets.ModelViewSet):
+                           queryset=PurchaseOrder.objects.all()
+                           serializer_class=POSerializer
+    
+                    class HPViewSet(viewsets.ModelViewSet):
+                           queryset=HistoricalPerformance.objects.all()
+                           serializer_class=HPSerializer
+    
+                </pre>
+            </div>
+            <div class="urls">
+                <h1>vendors/urls.py</h1>
+                <pre>
+                    from django.contrib import admin
+                    from django.urls import path,include
+                    from vendor.views import VendorViewSet, POViewSet, HPViewSet
+                    from rest_framework import routers
+
+
+                    router = routers.DefaultRouter()
+                    router.register(r'Vendor', VendorViewSet)
+                    router.register(r'PurchaseOrder', POViewSet)
+                    router.register(r'HistoricalPerformance', HPViewSet)
+
+                    urlpatterns = [
+                        path('', include(router.urls)),
+                    ]
+                </pre>
+            </div>
+           
+            </div>
+           </div>
+
+        </div>
+
+        
+</body>
+
+</html>
